@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <vector>
+#include <unistd.h> // write(), read(), close()
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -52,14 +53,14 @@ std::vector<hardware_interface::StateInterface> Create2HardwareInterface::export
   std::vector<hardware_interface::StateInterface> state_interfaces;
 
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[0].name, hardware_interface::HW_IF_POSITION, &left_wheel_position_));
+    info_.joints[0].name, "position", &left_wheel_position_));
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[0].name, hardware_interface::HW_IF_VELOCITY, &left_wheel_velocity_));
+    info_.joints[0].name, "velocity", &left_wheel_velocity_));
 
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[1].name, hardware_interface::HW_IF_POSITION, &right_wheel_position_));
+    info_.joints[1].name, "position", &right_wheel_position_));
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[1].name, hardware_interface::HW_IF_VELOCITY, &right_wheel_velocity_));
+    info_.joints[1].name, "velocity", &right_wheel_velocity_));
 
   return state_interfaces;
 }
@@ -69,10 +70,10 @@ std::vector<hardware_interface::CommandInterface> Create2HardwareInterface::expo
   std::vector<hardware_interface::CommandInterface> command_interfaces;
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-    info_.joints[0].name, hardware_interface::HW_IF_VELOCITY, &left_wheel_velocity_command_));
+    info_.joints[0].name, "velocity", &left_wheel_velocity_command_));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-    info_.joints[1].name, hardware_interface::HW_IF_VELOCITY, &right_wheel_velocity_command_));
+    info_.joints[1].name, "velocity", &right_wheel_velocity_command_));
 
   return command_interfaces;
 }
@@ -247,7 +248,7 @@ bool Create2HardwareInterface::send_command(const std::vector<uint8_t>& command)
 {
   if (serial_fd_ < 0) return false;
   
-  ssize_t bytes_written = write(serial_fd_, command.data(), command.size());
+  ssize_t bytes_written = ::write(serial_fd_, command.data(), command.size());
   return bytes_written == static_cast<ssize_t>(command.size());
 }
 
