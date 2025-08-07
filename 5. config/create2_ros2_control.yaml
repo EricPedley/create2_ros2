@@ -1,0 +1,8 @@
+# Control parameters for Create2 robot using ROS2
+
+joint_names:
+  - joint1
+  - joint2
+  - joint3
+
+controller_name: create2_hardware_controller
