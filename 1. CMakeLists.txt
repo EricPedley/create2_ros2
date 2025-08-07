@@ -1,8 +1,0 @@
-cmake_minimum_required(VERSION 3.5)
-project(create2_hardware)
-add_executable(create2_hardware_interface src/create2_hardware_interface.cpp)
-find_package(ros2 REQUIRED core)
-ros2_add_library(create2_hardware
-  INCLUDE_DIRECTORIES include
-  SOURCES src/create2_hardware_interface.cpp
-)

@@ -1,3 +1,159 @@
-<robot name="create2">
-  <!-- Add your Create2 robot description here -->
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="create2">
+  
+  <xacro:arg name="use_ros2_control" default="true"/>
+  <xacro:arg name="device_path" default="/dev/ttyUSB0"/>
+  <xacro:arg name="baud_rate" default="115200"/>
+
+  <!-- Constants -->
+  <xacro:property name="base_radius" value="0.17"/>
+  <xacro:property name="base_height" value="0.092"/>
+  <xacro:property name="wheel_radius" value="0.036"/>
+  <xacro:property name="wheel_width" value="0.022"/>
+  <xacro:property name="wheel_separation" value="0.235"/>
+  
+  <!-- Materials -->
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1"/>
+  </material>
+  
+  <material name="gray">
+    <color rgba="0.5 0.5 0.5 1"/>
+  </material>
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${base_radius}" length="${base_height}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${base_radius}" length="${base_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="3.0"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Left Wheel -->
+  <link name="left_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <origin rpy="1.5708 0 0"/>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <origin rpy="1.5708 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel_link"/>
+    <origin xyz="0 ${wheel_separation/2} 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.2" friction="0.1"/>
+  </joint>
+
+  <!-- Right Wheel -->
+  <link name="right_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <origin rpy="1.5708 0 0"/>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <origin rpy="1.5708 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel_link"/>
+    <origin xyz="0 ${-wheel_separation/2} 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.2" friction="0.1"/>
+  </joint>
+
+  <!-- Caster Wheel (for stability) -->
+  <link name="caster_link">
+    <visual>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_link"/>
+    <origin xyz="0.12 0 -0.046"/>
+  </joint>
+
+  <!-- ROS2 Control -->
+  <xacro:if value="$(arg use_ros2_control)">
+    <ros2_control name="Create2HardwareInterface" type="system">
+      <hardware>
+        <plugin>create2_hardware/Create2HardwareInterface</plugin>
+        <param name="device">$(arg device_path)</param>
+        <param name="baud_rate">$(arg baud_rate)</param>
+      </hardware>
+      
+      <joint name="left_wheel_joint">
+        <command_interface name="velocity">
+          <param name="min">-8.72</param>  <!-- -500mm/s / 36mm radius -->
+          <param name="max">8.72</param>   <!-- 500mm/s / 36mm radius -->
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      
+      <joint name="right_wheel_joint">
+        <command_interface name="velocity">
+          <param name="min">-8.72</param>
+          <param name="max">8.72</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+  </xacro:if>
+
 </robot>

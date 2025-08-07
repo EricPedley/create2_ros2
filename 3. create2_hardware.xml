@@ -1,3 +1,0 @@
-<package name="create2_hardware">
-  <executable name="create2_hardware_interface" exec="src/create2_hardware_interface.cpp" />
-</package>

@@ -1,8 +1,53 @@
-# Control parameters for Create2 robot using ROS2
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+    
+    create2_base_controller:
+      type: diff_drive_controller/DiffDriveController
+      
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
 
-joint_names:
-  - joint1
-  - joint2
-  - joint3
+create2_base_controller:
+  ros__parameters:
+    left_wheel_names: ["left_wheel_joint"]
+    right_wheel_names: ["right_wheel_joint"]
+    
+    wheel_separation: 0.235  # meters (Roomba wheelbase)
+    wheel_radius: 0.036     # meters (72mm diameter wheels)
+    
+    # Robot description
+    base_frame_id: base_link
+    odom_frame_id: odom
+    
+    # Twist command parameters
+    cmd_vel_timeout: 0.5
+    publish_limited_velocity: true
+    velocity_rolling_window_size: 10
+    
+    # Limits
+    linear:
+      x:
+        has_velocity_limits: true
+        has_acceleration_limits: true
+        has_jerk_limits: false
+        max_velocity: 0.5     # m/s (Create 2 max ~0.5 m/s)
+        min_velocity: -0.5    # m/s 
+        max_acceleration: 1.0  # m/s^2
+        min_acceleration: -1.0 # m/s^2
+        
+    angular:
+      z:
+        has_velocity_limits: true
+        has_acceleration_limits: true
+        has_jerk_limits: false
+        max_velocity: 2.0     # rad/s
+        min_velocity: -2.0    # rad/s
+        max_acceleration: 3.0  # rad/s^2
+        min_acceleration: -3.0 # rad/s^2
 
-controller_name: create2_hardware_controller
+joint_state_broadcaster:
+  ros__parameters:
+    joints:
+      - left_wheel_joint
+      - right_wheel_joint

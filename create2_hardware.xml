@@ -1,0 +1,7 @@
+<library path="create2_hardware">
+  <class name="create2_hardware/Create2HardwareInterface" type="create2_hardware::Create2HardwareInterface" base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware interface for iRobot Create 2 using the Open Interface specification
+    </description>
+  </class>
+</library>
