@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypename="package"?>
 <package format="3">
-  <name>create2_hardware</name>
+  <name>create2_ros2</name>
   <version>1.0.0</version>
   <description>Hardware interface for iRobot Create 2 using ROS2 Control</description>
   <maintainer email="your.email@example.com">Your Name</maintainer>

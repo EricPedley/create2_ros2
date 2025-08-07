@@ -1,0 +1,18 @@
+{
+  "configurations": [
+    {
+      "name": "ROS",
+      "includePath": [
+        "${workspaceFolder}/include",
+        "/opt/ros/humble/include/**",
+        "/opt/ros/humble/include/hardware_interface"
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "c17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ],
+  "version": 4
+}
