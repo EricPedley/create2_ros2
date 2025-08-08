@@ -132,8 +132,9 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
     ]
 
-    if use_fake_hardware == 'false':
-        nodes.append(control_node)
-        nodes.append(delay_robot_controller_spawner_after_joint_state_broadcaster_spawner)
+    #print(f'Use fake hardware: {use_fake_hardware}', type(use_fake_hardware))
+    #if use_fake_hardware == 'false':
+    nodes.append(control_node)
+    nodes.append(delay_robot_controller_spawner_after_joint_state_broadcaster_spawner)
 
     return LaunchDescription(declared_arguments + nodes)
