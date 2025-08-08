@@ -1,6 +1,9 @@
 # Create 2 ROS2 Control Hardware Interface
 
-This package provides a ROS2 Control hardware interface for the iRobot Create 2 based on the Open Interface specification. It allows you to control the Create 2 using standard ROS2 `geometry_msgs/Twist` messages through the diff_drive_controller.
+This package provides a ROS2 Control hardware interface for the iRobot Create 2 based on the Open Interface specification. It allows you to control the Create 2 using standard ROS2 `geometry_msgs/Twist` messages through the diff_drive_controller. The main difference between this and the more popular irobot libraries are:
+1. This repo is self-contained and works with recent cmake verions
+2. Control is done through `ros2_control` instead of just exposing topics for individual wheel velocities
+3. There are less features. I haven't implemented the bumper, point distance sensors, IR beacon, or wheel lift sensors, and I don't really plan to. I'm basially just using the roomba like a turtlebot I got for no cost.
 
 ## Features
 
