@@ -54,7 +54,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("create2_hardware"), "urdf", "create2.urdf.xacro"]
+                [FindPackageShare("create2_ros2"), "urdf", "create2.urdf.xacro"]
             ),
             " ",
             "device_path:=",
@@ -75,7 +75,7 @@ def generate_launch_description():
     # Robot controllers config file
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare("create2_hardware"),
+            FindPackageShare("create2_ros2"),
             "config",
             "create2_ros2_control.yaml",
         ]
