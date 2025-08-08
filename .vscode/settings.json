@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.sdf": "xml",
+        "*.urdf": "xml",
+        "*.world": "xml",
+        "vector": "cpp",
+        "limits": "cpp",
+        "string": "cpp",
+        "chrono": "cpp",
+        "memory": "cpp"
+    }
+}
