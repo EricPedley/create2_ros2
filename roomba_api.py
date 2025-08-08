@@ -628,6 +628,14 @@ class Create2:
             return distance, angle
         return None
 
+    def get_encoder_counts(self):
+        left_encoder_data = self.get_sensors(43)
+        right_encoder_data = self.get_sensors(44)
+        left_counts = struct.unpack('>h', left_encoder_data)[0]
+        right_counts = struct.unpack('>h', right_encoder_data)[0]
+        return left_counts, right_counts
+
+
 # Convenience functions for common operations
 
 def create_simple_song(frequency_duration_pairs: List[Tuple[float, float]]) -> List[Tuple[int, int]]:
@@ -685,11 +693,13 @@ if __name__ == "__main__":
                 print("Failed to get batt info")
             
             # Drive forward for 1 second
+            print('encoders left/right:', robot.get_encoder_counts())
             robot.drive_pwm(100,100)  # 200 mm/s forward
             time.sleep(1)
             robot.stop_motors()
-            print('encoders:', robot.get_distance_angle())
-            
+            print('encoders left/right:', robot.get_encoder_counts())
+            print('internal odom (distance (mm) +angle (deg))', robot.get_distance_angle())
+
             # Define and play a simple song
             notes = create_simple_song([(440, 0.5), (523, 0.5), (659, 0.5)])  # A, C, E
             robot.define_song(0, notes)
