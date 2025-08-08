@@ -53,12 +53,12 @@ sudo usermod -a -G dialout $USER
 
 Launch the Create 2 with default settings:
 ```bash
-ros2 launch create2_hardware create2_bringup.launch.py
+ros2 launch create2_ros2 create2_bringup.launch.py
 ```
 
 Or with custom device path:
 ```bash
-ros2 launch create2_hardware create2_bringup.launch.py device_path:=/dev/ttyUSB0
+ros2 launch create2_ros2 create2_bringup.launch.py device_path:=/dev/ttyUSB0
 ```
 
 For 19200 baud rate (if needed):
