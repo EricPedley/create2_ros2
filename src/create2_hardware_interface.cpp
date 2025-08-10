@@ -25,8 +25,6 @@ hardware_interface::CallbackReturn Create2HardwareInterface::on_init(
   // Initialize state variables
   left_wheel_position_ = 0.0;
   right_wheel_position_ = 0.0;
-  left_wheel_velocity_ = 0.0;
-  right_wheel_velocity_ = 0.0;
   left_wheel_velocity_command_ = 0.0;
   right_wheel_velocity_command_ = 0.0;
   prev_left_encoder_ = 0;
@@ -54,13 +52,9 @@ std::vector<hardware_interface::StateInterface> Create2HardwareInterface::export
 
   state_interfaces.emplace_back(hardware_interface::StateInterface(
     info_.joints[0].name, "position", &left_wheel_position_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[0].name, "velocity", &left_wheel_velocity_));
 
   state_interfaces.emplace_back(hardware_interface::StateInterface(
     info_.joints[1].name, "position", &right_wheel_position_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[1].name, "velocity", &right_wheel_velocity_));
 
   return state_interfaces;
 }
@@ -137,39 +131,37 @@ hardware_interface::return_type Create2HardwareInterface::read(
   if (send_command(query_cmd))
   {
     encoder_data.resize(6); // 2 packet IDs + 4 bytes of data
-    ssize_t bytes_read = ::read(serial_fd_, encoder_data.data(), encoder_data.size());
+    const ssize_t bytes_read = ::read(serial_fd_, encoder_data.data(), encoder_data.size());
     
     if (bytes_read == 6)
     {
       // Parse encoder data
-      int32_t left_encoder = bytes_to_int16(encoder_data[1], encoder_data[2]);  // Skip packet ID
-      int32_t right_encoder = bytes_to_int16(encoder_data[4], encoder_data[5]); // Skip packet ID
+      const int32_t left_encoder = bytes_to_int16(encoder_data[1], encoder_data[2]);  // Skip packet ID
+      const int32_t right_encoder = bytes_to_int16(encoder_data[4], encoder_data[5]); // Skip packet ID
       
       // Calculate position and velocity
-      int32_t left_delta = left_encoder - prev_left_encoder_;
-      int32_t right_delta = right_encoder - prev_right_encoder_;
-      
-      // Handle encoder rollover
-      if (left_delta > 16384) left_delta -= 32768;
-      if (left_delta < -16384) left_delta += 32768;
-      if (right_delta > 16384) right_delta -= 32768;
-      if (right_delta < -16384) right_delta += 32768;
+      int32_t left_delta;
+      if (left_encoder < prev_left_encoder_) {
+        left_delta = (std::numeric_limits<int16_t>::max() - prev_left_encoder_) + (left_encoder - std::numeric_limits<int16_t>::min());
+      } else {
+        left_delta = left_encoder - prev_left_encoder_;
+      }
+
+      int32_t right_delta;
+      if (right_encoder < prev_right_encoder_) {
+        right_delta = (std::numeric_limits<int16_t>::max() - prev_right_encoder_) + (right_encoder - std::numeric_limits<int16_t>::min());
+      } else {
+        right_delta = right_encoder - prev_right_encoder_;
+      }
       
       // Convert to radians
-      double left_wheel_delta = (left_delta * 2.0 * M_PI) / counts_per_rev_;
-      double right_wheel_delta = (right_delta * 2.0 * M_PI) / counts_per_rev_;
+      const double left_wheel_delta = left_delta / counts_per_rev_;
+      const double right_wheel_delta = right_delta / counts_per_rev_;
       
       // Update position
       left_wheel_position_ += left_wheel_delta;
       right_wheel_position_ += right_wheel_delta;
       
-      // Calculate velocity
-      double dt = period.seconds();
-      if (dt > 0)
-      {
-        left_wheel_velocity_ = left_wheel_delta / dt;
-        right_wheel_velocity_ = right_wheel_delta / dt;
-      }
       
       prev_left_encoder_ = left_encoder;
       prev_right_encoder_ = right_encoder;
@@ -305,7 +297,7 @@ void Create2HardwareInterface::send_wheel_velocities()
 
 int16_t Create2HardwareInterface::bytes_to_int16(uint8_t high_byte, uint8_t low_byte)
 {
-  return static_cast<int16_t>((high_byte << 8) | low_byte);
+  return static_cast<int16_t>(high_byte << 8) | low_byte;
 }
 
 }  // namespace create2_hardware

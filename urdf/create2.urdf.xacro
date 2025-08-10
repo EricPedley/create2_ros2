@@ -142,7 +142,6 @@
           <param name="max">8.72</param>   <!-- 500mm/s / 36mm radius -->
         </command_interface>
         <state_interface name="position"/>
-        <state_interface name="velocity"/>
       </joint>
       
       <joint name="right_wheel_joint">
@@ -151,7 +150,6 @@
           <param name="max">8.72</param>
         </command_interface>
         <state_interface name="position"/>
-        <state_interface name="velocity"/>
       </joint>
     </ros2_control>
   </xacro:if>

@@ -62,8 +62,6 @@ private:
   // State variables
   double left_wheel_position_;
   double right_wheel_position_;
-  double left_wheel_velocity_;
-  double right_wheel_velocity_;
   
   // Command variables
   double left_wheel_velocity_command_;
