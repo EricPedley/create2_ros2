@@ -556,9 +556,13 @@ class Create2:
             24: 1,  # Temperature
             25: 2,  # Battery charge
             26: 2,  # Battery capacity
+            43: 2,  # Left encoder
+            44: 2,  # Right encoder
             # Add more as needed
         }
-        return packet_lengths.get(packet_id, 1)
+        if packet_id not in packet_lengths:
+            raise ValueError(f'{packet_id} not in hard-coded dictionary. Check _get_packet_length to implement it')
+        return packet_lengths[packet_id]
     
     def get_bumper_state(self) -> Optional[Dict[str, bool]]:
         """
@@ -693,6 +697,7 @@ if __name__ == "__main__":
                 print("Failed to get batt info")
             
             # Drive forward for 1 second
+            print('internal odom (distance (mm) +angle (deg))', robot.get_distance_angle())
             print('encoders left/right:', robot.get_encoder_counts())
             robot.drive_pwm(100,100)  # 200 mm/s forward
             time.sleep(1)
