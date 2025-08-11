@@ -130,14 +130,14 @@ hardware_interface::return_type Create2HardwareInterface::read(
   
   if (send_command(query_cmd))
   {
-    encoder_data.resize(6); // 2 packet IDs + 4 bytes of data
+    encoder_data.resize(4); // 4 bytes of data
     const ssize_t bytes_read = ::read(serial_fd_, encoder_data.data(), encoder_data.size());
     
-    if (bytes_read == 6)
+    if (bytes_read == 4)
     {
       // Parse encoder data
-      const int32_t left_encoder = bytes_to_int16(encoder_data[1], encoder_data[2]);  // Skip packet ID
-      const int32_t right_encoder = bytes_to_int16(encoder_data[4], encoder_data[5]); // Skip packet ID
+      const int32_t left_encoder = bytes_to_int16(encoder_data[0], encoder_data[1]);  // Skip packet ID
+      const int32_t right_encoder = bytes_to_int16(encoder_data[2], encoder_data[3]); // Skip packet ID
       
       // Calculate position and velocity
       int32_t left_delta;
