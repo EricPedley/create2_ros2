@@ -141,18 +141,9 @@ hardware_interface::return_type Create2HardwareInterface::read(
       
       // Calculate position and velocity
       int32_t left_delta;
-      if (left_encoder < prev_left_encoder_) {
-        left_delta = (std::numeric_limits<int16_t>::max() - prev_left_encoder_) + (left_encoder - std::numeric_limits<int16_t>::min());
-      } else {
-        left_delta = left_encoder - prev_left_encoder_;
-      }
-
       int32_t right_delta;
-      if (right_encoder < prev_right_encoder_) {
-        right_delta = (std::numeric_limits<int16_t>::max() - prev_right_encoder_) + (right_encoder - std::numeric_limits<int16_t>::min());
-      } else {
-        right_delta = right_encoder - prev_right_encoder_;
-      }
+      left_delta = (left_encoder - prev_left_encoder_)%(1<<16);
+      right_delta = (right_encoder - prev_right_encoder_)%(1<<16);
       
       // Convert to radians
       const double left_wheel_delta = left_delta / counts_per_rev_;
@@ -165,7 +156,8 @@ hardware_interface::return_type Create2HardwareInterface::read(
       
       prev_left_encoder_ = left_encoder;
       prev_right_encoder_ = right_encoder;
-      RCLCPP_INFO(rclcpp::get_logger("Create2HardwareInterface"), "Encoder positions: %d, %d", left_encoder, right_encoder);
+      // RCLCPP_INFO(rclcpp::get_logger("Create2HardwareInterface"), "Encoder positions: %d, %d", left_encoder, right_encoder);
+      // RCLCPP_INFO(rclcpp::get_logger("Create2HardwareInterface"), "Wheel positions: %f, %f", left_wheel_position_, right_wheel_position_);
       return hardware_interface::return_type::OK;
     } else {
       RCLCPP_ERROR(rclcpp::get_logger("Create2HardwareInterface"), "Bytes read from encoder query was not 6: %zu", bytes_read);
