@@ -167,7 +167,7 @@ hardware_interface::return_type Create2HardwareInterface::read(
       prev_right_encoder_ = right_encoder;
       return hardware_interface::return_type::OK;
     } else {
-      RCLCPP_ERROR(rclcpp::get_logger("Create2HardwareInterface"), "Bytes read from encoder query was not 6");
+      RCLCPP_ERROR(rclcpp::get_logger("Create2HardwareInterface"), "Bytes read from encoder query was not 6: %zu", bytes_read);
     }
   } else {
     RCLCPP_ERROR(rclcpp::get_logger("Create2HardwareInterface"), "Encoder query command was not successful");
