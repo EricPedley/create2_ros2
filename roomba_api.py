@@ -538,7 +538,7 @@ class Create2:
         return None
     
     def get_sensors_multiple(self, packet_ids: list[int]) -> Optional[bytes]:
-        if self._send_command(149, 2, packet_ids):
+        if self._send_command(149, 2, *packet_ids):
             # Determine expected response length based on packet ID
             expected_response_length = sum([self._get_packet_length(id) for id in packet_ids])
             if expected_response_length > 0:
@@ -643,9 +643,8 @@ class Create2:
 
     def get_encoder_counts(self):
         encoder_data = self.get_sensors_multiple([43, 44])
-        print(encoder_data)
-        left_encoder_data = self.get_sensors(43)
-        right_encoder_data = self.get_sensors(44)
+        left_encoder_data = encoder_data[:2]
+        right_encoder_data = encoder_data[2:]
         left_counts = struct.unpack('>h', left_encoder_data)[0]
         right_counts = struct.unpack('>h', right_encoder_data)[0]
         return left_counts, right_counts
