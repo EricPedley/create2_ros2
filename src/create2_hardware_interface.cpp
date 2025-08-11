@@ -146,8 +146,8 @@ hardware_interface::return_type Create2HardwareInterface::read(
       right_delta = (right_encoder - prev_right_encoder_)%(1<<16);
       
       // Convert to radians
-      const double left_wheel_delta = left_delta / counts_per_rev_;
-      const double right_wheel_delta = right_delta / counts_per_rev_;
+      const double left_wheel_delta = left_delta / counts_per_rev_ * 6.28;
+      const double right_wheel_delta = right_delta / counts_per_rev_ * 6.28;
       
       // Update position
       left_wheel_position_ += left_wheel_delta;
